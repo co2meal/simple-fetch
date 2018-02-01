@@ -124,8 +124,9 @@ export default class Client {
      * It is useful for tracking while listening unload event.
      */
 
-    sendBeacon(url: String, body?: Object, encoder?: (body: any) => any) {
-        return navigator.sendBeacon(`${this.baseUrl}${url}`, encoder ? encoder(body) : JSON.stringify(body))
+    sendBeacon(url: String, body?: Object) {
+        var blob: any = new Blob([JSON.stringify(body)], this.getHeader());
+        return navigator.sendBeacon(`${this.baseUrl}${url}`, blob)
     }
 
     /**
