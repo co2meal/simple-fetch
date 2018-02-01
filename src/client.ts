@@ -1,4 +1,5 @@
 import 'whatwg-fetch';
+import 'navigator.sendbeacon';
 
 import Error from './interfaces/error';
 
@@ -119,14 +120,22 @@ export default class Client {
     }
 
     /**
+     * Navigator.sendBeacon Polyfill
+     * It is useful for tracking while listening unload event.
+     */
+
+    sendBeacon(url: String, body?: Object, encoder?: (body: any) => any) {
+        return navigator.sendBeacon(`${this.baseUrl}${url}`, encoder ? encoder(body) : JSON.stringify(body))
+    }
+
+    /**
      * Base fetch method with default tasks (check status, parse json)
      */
     fetch(url: string, options?: Object) {
-        return fetch(url, {
+        return fetch(url, Object.assign({
             headers: this.getHeader(),
             credentials: this.credentials || undefined,
-            ...options
-        })
+        }, options))
         .then(Client.checkStatus)
         .catch(Client.checkDisconnected)
     }
